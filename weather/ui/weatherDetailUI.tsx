@@ -43,6 +43,7 @@ export const WeatherDetailUI = () => {
   /* access to route.params.city   */
   /* ----------------------------- */
   const route = useRoute<WeatherDetailRouteProp>();
+  const test = "";
 
   /* ------------------------------ */
   /* access to navigation functions */
