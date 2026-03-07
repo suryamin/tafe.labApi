@@ -40,5 +40,11 @@ yarn-error.*
 /ios
 /android
 
+# excluded
+android/
+ios/
+bin/
+build/
+
 # text
 *.txt
