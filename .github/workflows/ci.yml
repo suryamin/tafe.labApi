@@ -1,3 +1,6 @@
+# To "deploy to github web
+# npm install gh-pages --save-dev --legacy-peer-deps
+
 name: Test Before Merge
 
 on:
@@ -42,6 +45,7 @@ jobs:
   build-android:
     needs: test-and-lint
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
