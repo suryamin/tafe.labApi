@@ -45,6 +45,9 @@ jobs:
     runs-on: ubuntu-latest
     # Only deploy when pushing to the main branch, not on pull requests
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Add these lines:
+    permissions:
+      contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
