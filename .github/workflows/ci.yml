@@ -1,7 +1,6 @@
 # To "deploy to github web
 # npm install gh-pages --save-dev --legacy-peer-deps
-
-name: Test Before Merge
+name: Test and Deploy Web
 
 on:
   pull_request:
@@ -23,11 +22,9 @@ jobs:
           cache: "npm"
 
       - name: Install Dependencies
-        # Critical: Use legacy-peer-deps to fix the React 19 / test-renderer conflict
         run: npm install --legacy-peer-deps
 
       - name: Run Linting
-        # Adding '--' and '|| true' ensures the workflow continues even if lint finds issues
         run: |
           if [ -f "./node_modules/.bin/eslint" ]; then
             ./node_modules/.bin/eslint . || true
@@ -36,47 +33,37 @@ jobs:
           fi
 
       - name: Run Unit Tests
-        # This will now use your 'jest --setupFiles ./jest.globals.js'
         run: npm test --if-present
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
-  build-android:
+  deploy-web:
     needs: test-and-lint
     runs-on: ubuntu-latest
-    continue-on-error: true
-    if: github.ref == 'refs/heads/main'
+    # Only deploy when pushing to the main branch, not on pull requests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        # Updated to Java 21 to match your local Android API 36 environment
-        uses: actions/setup-java@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+          node-version: "20"
+          cache: "npm"
 
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build Android Release
-        run: |
-          cd android
-          chmod +x gradlew
-          # assembleRelease creates the APK
-          ./gradlew assembleRelease
-
       - name: Build Web Version
-        # This creates the 'dist' folder for the web
+        # This creates the 'dist' folder
         run: npx expo export --platform web
+        env:
+          EXPO_PUBLIC_BASE_PATH: /tafe.labApi/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist # The folder created by expo export
-          branch: gh-pages # The branch where the website lives
+          folder: dist
+          branch: gh-pages
