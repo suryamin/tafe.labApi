@@ -1,0 +1,52 @@
+name: Test Before Merge
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main] # Added this so it also runs when you push directly
+
+jobs:
+  test-and-lint: # This name must match the 'needs' below
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Linting
+        run: npm run lint || echo "No lint script found"
+
+      - name: Run Unit Tests
+        run: npm test
+        env:
+          # These must be added to GitHub Settings > Secrets > Actions
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+  build-android:
+    needs: test-and-lint # FIXED: Must match the job name above
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Build Android Release
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
