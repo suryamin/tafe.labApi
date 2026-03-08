@@ -46,6 +46,7 @@ jobs:
     needs: test-and-lint
     runs-on: ubuntu-latest
     continue-on-error: true
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -69,3 +70,13 @@ jobs:
           chmod +x gradlew
           # assembleRelease creates the APK
           ./gradlew assembleRelease
+
+      - name: Build Web Version
+        # This creates the 'dist' folder for the web
+        run: npx expo export --platform web
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # The folder created by expo export
+          branch: gh-pages # The branch where the website lives
