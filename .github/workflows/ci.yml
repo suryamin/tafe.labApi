@@ -1,5 +1,7 @@
 # To "deploy to github web
 # npm install gh-pages --save-dev --legacy-peer-deps
+# npx expo install react-dom@19.1.0 react-native-web@^0.21.0 -- --legacy-peer-deps
+
 name: Test and Deploy Web
 
 on:

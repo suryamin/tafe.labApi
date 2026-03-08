@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "Labs",
-    "slug": "Labs",
+    "name": "tafe.labApi",
+    "slug": "tafe.labApi",
+    "platforms": ["ios", "android", "web"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
