@@ -4,10 +4,10 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main] # Added this so it also runs when you push directly
+    branches: [main]
 
 jobs:
-  test-and-lint: # This name must match the 'needs' below
+  test-and-lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -20,33 +20,43 @@ jobs:
           cache: "npm"
 
       - name: Install Dependencies
-        run: npm install
+        # Critical: Use legacy-peer-deps to fix the React 19 / test-renderer conflict
+        run: npm install --legacy-peer-deps
 
       - name: Run Linting
-        run: npm run lint || echo "No lint script found"
+        # Using --if-present prevents the build from failing if the script is missing
+        run: npm run lint --if-present
 
       - name: Run Unit Tests
+        # This will now use your 'jest --setupFiles ./jest.globals.js'
         run: npm test
         env:
-          # These must be added to GitHub Settings > Secrets > Actions
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
   build-android:
-    needs: test-and-lint # FIXED: Must match the job name above
+    needs: test-and-lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
+        # Updated to Java 21 to match your local Android API 36 environment
         uses: actions/setup-java@v4
         with:
-          java-version: "17"
+          java-version: "21"
           distribution: "temurin"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
 
       - name: Build Android Release
         run: |
           cd android
           chmod +x gradlew
+          # assembleRelease creates the APK
           ./gradlew assembleRelease
