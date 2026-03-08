@@ -24,8 +24,13 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Run Linting
-        # Using --if-present prevents the build from failing if the script is missing
-        run: npm run lint --if-present || true
+        # This checks if the file exists before running it, preventing the 127 error
+        run: |
+          if [ -f "./node_modules/.bin/eslint" ]; then
+            ./node_modules/.bin/eslint .
+          else
+            echo "ESLint not found in node_modules, skipping..."
+          fi
 
       - name: Run Unit Tests
         # This will now use your 'jest --setupFiles ./jest.globals.js'
