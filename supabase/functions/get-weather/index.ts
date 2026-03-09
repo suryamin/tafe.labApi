@@ -1,17 +1,26 @@
-// 1. Reference the Deno types to help VS Code understand 'Deno' and 'Request'
-/// <reference types="https://raw.githubusercontent.com/supabase/edge-runtime/main/lib/edge-runtime.d.ts" />
+// No more /// <reference ... /> needed here! It's in deno.json now.
+import { serve } from "std/server";
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// Defining the shape of the Weather Data
+interface WeatherResponse {
+  main: {
+    temp: number;
+    humidity: number;
+  };
+  weather: Array<{
+    description: string;
+    icon: string;
+  }>;
+  name: string;
+}
 
-// 2. Setup CORS so your React Native app is allowed to call this function
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req: Request) => {
-  // Handle the browser/mobile 'preflight' request
+serve(async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -19,29 +28,31 @@ serve(async (req: Request) => {
   try {
     const url = new URL(req.url);
     const city = url.searchParams.get("city");
-
-    // This pulls the key you saved in Step 2 securely from the server
     const apiKey = Deno.env.get("WEATHER_API_KEY");
 
     if (!city) {
-      return new Response(JSON.stringify({ error: "City name is required" }), {
+      return new Response(JSON.stringify({ error: "City is required" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // 3. Fetch data from OpenWeather
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
     const response = await fetch(weatherUrl);
-    const data = await response.json();
 
-    // 4. Return the data to your React Native app
+    // Explicitly using the interface to remove 'any'
+    const data: WeatherResponse = await response.json();
+
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
-  } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), {
+  } catch (err: unknown) {
+    // Replacing 'any' with a type-safe check
+    const errorMessage =
+      err instanceof Error ? err.message : "Internal Server Error";
+
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

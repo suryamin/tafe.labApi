@@ -1,5 +1,6 @@
 //npm install --save-dev @testing-library/react-native --legacy-peer-deps
 //npm install -D react-test-renderer@19.1.0 --legacy-peer-deps
+//npm install --save-dev typescript-eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin --legacy-peer-deps
 
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";

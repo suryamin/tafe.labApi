@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "lib": ["deno.window", "esnext"]
+    "lib": ["deno.window", "esnext"],
+    "types": [
+      "https://raw.githubusercontent.com/supabase/edge-runtime/main/lib/edge-runtime.d.ts"
+    ]
   },
   "importMap": "import_map.json"
 }
