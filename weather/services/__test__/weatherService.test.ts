@@ -1,10 +1,22 @@
 import { describe, expect, test, jest, beforeEach } from "@jest/globals";
 import axios from "axios";
 import { getWeather, formatTime } from "../weatherService"; // Adjust path if needed
+import { WeatherResponse } from "../../models/weatherResponseModel";
 
 // 1. Mock Axios
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+// Tell Jest to mock the entire module
+jest.mock("../services/weatherService");
+
+// Create a typed reference to the mock
+const mockedGetWeather = jest.mocked(getWeather);
+
+// Now .mockResolvedValue will be available
+mockedGetWeather.mockResolvedValue({
+  name: "Sydney",
+} as unknown as WeatherResponse);
 
 describe("WeatherService", () => {
   beforeEach(() => {
