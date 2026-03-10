@@ -62,7 +62,7 @@ jobs:
           EXPO_PUBLIC_BASE_PATH: /tafe.labApi/
 
       - name: Deploy to GitHub Pages
-        uses: gh-pages/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
           branch: gh-pages
