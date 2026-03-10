@@ -1,38 +1,34 @@
 import React from "react";
 import { render, waitFor } from "@testing-library/react-native";
-import { WeatherDetailUI } from "../weatherDetailUI";
-import { describe, expect, test, jest, beforeEach } from "@jest/globals";
+import { getWeather } from "../../services/weatherService";
 import { WeatherModel } from "../../models/weatherModel";
 import { WeatherResponse } from "../../models/weatherResponseModel";
-import { getWeather } from "../../services/weatherService";
 import { mapWeather } from "../../services/weatherMap";
+import { WeatherDetailUI } from "../weatherDetailUI";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 
-/// 1. Define navigation mocks with the 'mock' prefix so they are hoisted correctly
-const mockNavigate = jest.fn();
-const mockUseRoute = jest.fn();
+// 1. Mock the modules
+jest.mock("../../services/weatherMap");
+jest.mock("@react-navigation/native");
 
-// 2. Mock the modules
-// We mock the weatherMap service
-jest.mock("../../services/weatherMap", () => ({
-  getWeather: jest.fn(),
-  mapWeather: jest.fn(),
-}));
+// 2. Define our Param List for Type Safety
+type RootStackParamList = {
+  WeatherDetail: { city: string };
+};
 
-// We mock React Navigation
-jest.mock("@react-navigation/native", () => ({
-  useRoute: () => mockUseRoute(),
-  useNavigation: () => ({
-    navigate: mockNavigate,
-  }),
-}));
-
-// 3. Cast the imported functions as Jest Mocks
-// This provides the .mockResolvedValue and .mockReturnValue methods for TypeScript
+// 3. Cast for TypeScript using proper Generics
 const mockedGetWeather = getWeather as jest.MockedFunction<typeof getWeather>;
 const mockedMapWeather = mapWeather as jest.MockedFunction<typeof mapWeather>;
+const mockedUseRoute = useRoute as jest.MockedFunction<
+  () => RouteProp<RootStackParamList, "WeatherDetail">
+>;
+const mockedUseNavigation = useNavigation as jest.MockedFunction<
+  typeof useNavigation
+>;
 
 describe("WeatherDetailUI Component", () => {
   const mockCity = "Sydney";
+  const mockNavigate = jest.fn();
 
   const mockMappedWeather: WeatherModel = {
     city: "Sydney",
@@ -55,15 +51,28 @@ describe("WeatherDetailUI Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Setup the route params for the component to consume
-    mockUseRoute.mockReturnValue({
+    // Use specific RouteProp structure instead of 'any'
+    mockedUseRoute.mockReturnValue({
+      key: "test-key",
+      name: "WeatherDetail",
       params: { city: mockCity },
-    });
+    } as RouteProp<RootStackParamList, "WeatherDetail">);
+
+    // Use Partial to satisfy the Navigation object structure
+    mockedUseNavigation.mockReturnValue({
+      navigate: mockNavigate,
+      dispatch: jest.fn(),
+      reset: jest.fn(),
+      goBack: jest.fn(),
+      isFocused: () => true,
+      canGoBack: () => true,
+    } as unknown);
+    // Note: 'as any' on navigation is often allowed because the full
+    // navigation object has ~50 properties. If your linter still
+    // blocks it, use: as unknown as ReturnType<typeof useNavigation>
   });
 
   test("should show loading indicator and then weather data", async () => {
-    // 4. Setup the mock return values
-    // Ensure the structure matches what your component expects from the API
     mockedGetWeather.mockResolvedValue({
       name: "Sydney",
       sys: { country: "AU" },
@@ -75,14 +84,12 @@ describe("WeatherDetailUI Component", () => {
 
     const { getByText } = render(<WeatherDetailUI />);
 
-    // 5. Assert: Wait for the async fetch to complete and UI to update
     await waitFor(() => {
-      // Check for the rendered text based on your mockMappedWeather
       expect(getByText("Sydney, AU")).toBeTruthy();
-      // Using a regex to find the temperature text regardless of exact formatting
       expect(getByText(/25/)).toBeTruthy();
     });
 
     expect(mockedGetWeather).toHaveBeenCalledWith("Sydney");
+    expect(mockedUseRoute).toHaveBeenCalled();
   });
 });
