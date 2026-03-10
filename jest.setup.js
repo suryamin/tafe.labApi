@@ -6,9 +6,9 @@
 // use    : test runner                              //
 // npm    : react-native-gesture-handler             //
 //---------------------------------------------------//
-/* eslint-disable no-undef */
+//* eslint-disable no-undef */
 
-/* eslint-disable no-undef */
+//* eslint-disable no-undef */
 
 // FIX: Prevent ReferenceError regarding __ExpoImportMetaRegistry
 global.__expo_import_meta_registry__ = {};

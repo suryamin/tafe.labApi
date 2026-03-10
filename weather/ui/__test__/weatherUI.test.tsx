@@ -4,7 +4,6 @@
 
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import { useNavigation } from "@react-navigation/native";
 import { describe, expect, test, jest, beforeEach } from "@jest/globals";
 import { WeatherUI } from "../weatherUI";
 

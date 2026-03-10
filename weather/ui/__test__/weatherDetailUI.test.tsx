@@ -3,7 +3,6 @@ import { render, waitFor } from "@testing-library/react-native";
 import { WeatherDetailUI } from "../weatherDetailUI";
 import { getWeather } from "../../services/weatherService";
 import { mapWeather } from "../../services/weatherMap";
-import { useRoute } from "@react-navigation/native";
 import { describe, expect, test, jest, beforeEach } from "@jest/globals";
 
 // 1. Define mocked functions with the 'mock' prefix so Jest hoists them
