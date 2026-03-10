@@ -1,34 +1,31 @@
 import React from "react";
 import { render, waitFor } from "@testing-library/react-native";
 import { getWeather } from "../../services/weatherService";
+import { mapWeather } from "../../services/weatherMap";
+import { useRoute } from "@react-navigation/native";
+import { RouteProp } from "@react-navigation/native";
 import { WeatherModel } from "../../models/weatherModel";
 import { WeatherResponse } from "../../models/weatherResponseModel";
-import { mapWeather } from "../../services/weatherMap";
 import { WeatherDetailUI } from "../weatherDetailUI";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 
-// 1. Mock the modules
+// Mock dependencies
+jest.mock("../../services/weatherService");
 jest.mock("../../services/weatherMap");
 jest.mock("@react-navigation/native");
 
-// 2. Define our Param List for Type Safety
+// Match component route type
 type RootStackParamList = {
-  WeatherDetail: { city: string };
+  WeatherDetailUI: { city: string };
 };
 
-// 3. Cast for TypeScript using proper Generics
 const mockedGetWeather = getWeather as jest.MockedFunction<typeof getWeather>;
 const mockedMapWeather = mapWeather as jest.MockedFunction<typeof mapWeather>;
 const mockedUseRoute = useRoute as jest.MockedFunction<
-  () => RouteProp<RootStackParamList, "WeatherDetail">
->;
-const mockedUseNavigation = useNavigation as jest.MockedFunction<
-  typeof useNavigation
+  () => RouteProp<RootStackParamList, "WeatherDetailUI">
 >;
 
 describe("WeatherDetailUI Component", () => {
   const mockCity = "Sydney";
-  const mockNavigate = jest.fn();
 
   const mockMappedWeather: WeatherModel = {
     city: "Sydney",
@@ -51,28 +48,29 @@ describe("WeatherDetailUI Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Use specific RouteProp structure instead of 'any'
     mockedUseRoute.mockReturnValue({
       key: "test-key",
-      name: "WeatherDetail",
+      name: "WeatherDetailUI",
       params: { city: mockCity },
-    } as RouteProp<RootStackParamList, "WeatherDetail">);
-
-    // Use Partial to satisfy the Navigation object structure
-    mockedUseNavigation.mockReturnValue({
-      navigate: mockNavigate,
-      dispatch: jest.fn(),
-      reset: jest.fn(),
-      goBack: jest.fn(),
-      isFocused: () => true,
-      canGoBack: () => true,
-    } as unknown);
-    // Note: 'as any' on navigation is often allowed because the full
-    // navigation object has ~50 properties. If your linter still
-    // blocks it, use: as unknown as ReturnType<typeof useNavigation>
+    } as RouteProp<RootStackParamList, "WeatherDetailUI">);
   });
 
-  test("should show loading indicator and then weather data", async () => {
+  // ===============================
+  // 1️⃣ Loading State Test
+  // ===============================
+  test("should show loading indicator initially", () => {
+    mockedGetWeather.mockResolvedValue({} as WeatherResponse);
+
+    const { getByTestId } = render(<WeatherDetailUI />);
+
+    // You must add testID="loading-indicator" in the UI
+    expect(getByTestId("loading-indicator")).toBeTruthy();
+  });
+
+  // ===============================
+  // 2️⃣ Weather Data Render
+  // ===============================
+  test("should display weather data after fetch", async () => {
     mockedGetWeather.mockResolvedValue({
       name: "Sydney",
       sys: { country: "AU" },
@@ -86,10 +84,38 @@ describe("WeatherDetailUI Component", () => {
 
     await waitFor(() => {
       expect(getByText("Sydney, AU")).toBeTruthy();
-      expect(getByText(/25/)).toBeTruthy();
+      expect(getByText("25°")).toBeTruthy();
+      expect(getByText("clear sky")).toBeTruthy();
     });
 
     expect(mockedGetWeather).toHaveBeenCalledWith("Sydney");
-    expect(mockedUseRoute).toHaveBeenCalled();
+  });
+
+  // ===============================
+  // 3️⃣ API Error Handling
+  // ===============================
+  test("should handle API errors gracefully", async () => {
+    mockedGetWeather.mockRejectedValue(new Error("API failed"));
+
+    const { getByText } = render(<WeatherDetailUI />);
+
+    await waitFor(() => {
+      expect(getByText("No data available")).toBeTruthy();
+    });
+  });
+
+  // ===============================
+  // 4️⃣ No Data Fallback
+  // ===============================
+  test("should show fallback when mapped weather is null", async () => {
+    mockedGetWeather.mockResolvedValue({} as WeatherResponse);
+
+    mockedMapWeather.mockReturnValue(null as unknown as WeatherModel);
+
+    const { getByText } = render(<WeatherDetailUI />);
+
+    await waitFor(() => {
+      expect(getByText("No data available")).toBeTruthy();
+    });
   });
 });

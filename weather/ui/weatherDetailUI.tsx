@@ -48,7 +48,11 @@ export const WeatherDetailUI = () => {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#fff" />
+        <ActivityIndicator
+          testID="loading-indicator"
+          size="large"
+          color="#fff"
+        />
       </View>
     );
   }
@@ -152,4 +156,3 @@ export const WeatherDetailUI = () => {
   );
 };
 
-// REMOVED: unused placeholder functions that were causing ESLint errors.
