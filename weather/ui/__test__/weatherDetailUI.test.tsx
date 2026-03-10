@@ -4,16 +4,16 @@ import { WeatherDetailUI } from "../weatherDetailUI";
 import { getWeather } from "../../services/weatherService";
 import { mapWeather } from "../../services/weatherMap";
 import { describe, expect, test, jest, beforeEach } from "@jest/globals";
-
+import { WeatherModel } from "../../models/weatherModel";
+import { WeatherResponse } from "../../models/weatherResponseModel";
 // 1. Define mocked functions with the 'mock' prefix so Jest hoists them
 const mockUseRoute = jest.fn();
 const mockNavigate = jest.fn();
 
 // 2. Mock modules using the prefixed variables
-jest.mock("../../services/weatherService");
 jest.mock("../../services/weatherMap");
 jest.mock("@react-navigation/native", () => ({
-  useRoute: () => mockUseRoute(), // Call the hoisted mock function
+  useRoute: () => mockUseRoute(),
   useNavigation: () => ({
     navigate: mockNavigate,
   }),
@@ -26,7 +26,7 @@ const mockedMapWeather = mapWeather as jest.MockedFunction<typeof mapWeather>;
 describe("WeatherDetailUI Component", () => {
   const mockCity = "Sydney";
 
-  const mockMappedWeather = {
+  const mockMappedWeather: WeatherModel = {
     city: "Sydney",
     country: "AU",
     temperature: 25,
@@ -54,8 +54,18 @@ describe("WeatherDetailUI Component", () => {
   });
 
   test("should show loading indicator and then weather data", async () => {
-    mockedGetWeather.mockResolvedValue({ name: "Sydney" } as any);
-    mockedMapWeather.mockReturnValue(mockMappedWeather as any);
+    /* --------------------------------------------------------- */
+    /* FIXED: Using 'as unknown as Type' instead of 'as any'     */
+    /* This satisfies the linter and the function signatures     */
+    /* --------------------------------------------------------- */
+
+    // Mock the raw API response (casted through unknown)
+    mockedGetWeather.mockResolvedValue({
+      name: "Sydney",
+    } as unknown as WeatherResponse);
+
+    // Mock the mapped model response
+    mockedMapWeather.mockReturnValue(mockMappedWeather);
 
     const { getByText } = render(<WeatherDetailUI />);
 

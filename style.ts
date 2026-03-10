@@ -68,13 +68,17 @@ export const styles = StyleSheet.create({
   menuRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  menuText: {
+    fontSize: 16,
+    color: "#333",
   },
   suffixButton: {
-    padding: 5,
-    fontSize: 24,
-    color: "black",
+    color: "#ccc",
   },
   center: {
     flex: 1,

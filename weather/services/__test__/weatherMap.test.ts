@@ -68,10 +68,15 @@ describe("Weather Mapper Detailed Logic", () => {
   });
 
   test("should handle missing optional weather elements using defaults", () => {
-    // Arrange: Create a response where the weather array might be empty (edge case)
+    // 1. We define the object as 'unknown' first to bypass strict property checks
+    // then cast it to 'WeatherResponse' to satisfy the function.
     const minimalResponse = {
       name: "Lijiang",
-      sys: { country: "CN", sunrise: 100, sunset: 200 },
+      sys: {
+        country: "CN",
+        sunrise: 100,
+        sunset: 200,
+      },
       main: {
         temp: 15,
         feels_like: 14,
@@ -80,15 +85,15 @@ describe("Weather Mapper Detailed Logic", () => {
         pressure: 1000,
         humidity: 40,
       },
-      weather: [], // Empty array test
+      weather: [],
       wind: { speed: 2, deg: 90 },
       clouds: { all: 50 },
-    };
+    } as unknown as WeatherResponse;
 
-    // Act
-    const result = mapWeather(minimalResponse as any);
+    // 2. Act
+    const result = mapWeather(minimalResponse);
 
-    // Assert: Check fallback for description and icon
+    // 3. Assert: Check fallback for description and icon
     expect(result.description).toBe("");
     expect(result.icon).toBe("");
   });
