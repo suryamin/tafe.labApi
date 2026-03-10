@@ -59,7 +59,7 @@ export const WeatherUI = () => {
       <FlatList
         data={cities}
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <View style={styles.taskContainer}>
             <Text style={styles.task}>{item}</Text>
             <TouchableOpacity
