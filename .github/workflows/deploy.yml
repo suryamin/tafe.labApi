@@ -26,7 +26,9 @@ jobs:
         run: npm install
 
       - name: Build Web
-        run: npx expo export --platform web
+        run: npx expo export --platform web --clear
+        env:
+          EXPO_PUBLIC_BASE_URL: /tafe.labApi
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

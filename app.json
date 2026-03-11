@@ -2,10 +2,9 @@
   "expo": {
     "name": "tafe.labApi",
     "slug": "tafe.labApi",
-    "platforms": ["ios", "android", "web"],
     "web": {
       "bundler": "metro",
-      "output": "export",
+      "output": "static",
       "baseUrl": "/tafe.labApi"
     }
   }
