@@ -34,17 +34,19 @@ jobs:
       #     touch dist/.nojekyll
       - name: Build Web
         run: |
-          # 1. Build the app
+          # 1. Build the app (generates the dist folder)
           EXPO_USE_STATIC=false npx expo export --platform web --clear
 
-          # 2. Fix the HTML script tag
+          # 2. Fix the HTML script tags in index.html
           sed -i 's|src="/_expo|src="/tafe.labApi/_expo|g' dist/index.html
 
-          # 3. THE CRITICAL FIX: Manually re-route the Icons inside the JS files
-          # This replaces "/assets/" with "/tafe.labApi/assets/" everywhere in your code
-          grep -rli '"/assets/' dist/_expo/static/js/web/ | xargs -i@ sed -i 's|"/assets/|"/tafe.labApi/assets/|g' @
+          # 3. FIX THE ICONS (Path A: Standard Assets)
+          grep -rli '"/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/assets/|"/tafe.labApi/assets/|g' @ || true
 
-          # 4. Tell GitHub not to ignore the _expo folder
+          # 4. FIX THE ICONS (Path B: Static Assets - THE LINE YOU ASKED ABOUT)
+          grep -rli '"/_expo/static/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/_expo/static/assets/|"/tafe.labApi/_expo/static/assets/|g' @ || true
+
+          # 5. Prevent GitHub from hiding folders
           touch dist/.nojekyll
 
       - name: Deploy to GitHub Pages
