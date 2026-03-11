@@ -33,18 +33,11 @@ jobs:
       #     # TELL GITHUB NOT TO IGNORE THE _EXPO FOLDER
       #     touch dist/.nojekyll
       - name: Build Web
+        env:
+          EXPO_PUBLIC_BASE_URL: "/tafe.labApi"
+          EXPO_USE_STATIC: "false"
         run: |
-          # 1. Build the app
-          EXPO_USE_STATIC=false npx expo export --platform web --clear
-
-          # 2. Fix the HTML paths (the script tag)
-          sed -i 's|src="/_expo|src="/tafe.labApi/_expo|g' dist/index.html
-
-          # 3. Fix the JavaScript internal paths (fonts, icons, assets)
-          # This replaces "/assets/" with "/tafe.labApi/assets/" inside the JS bundle
-          find dist/_expo/static/js/web -name "*.js" -exec sed -i 's|"/assets/|"/tafe.labApi/assets/|g' {} +
-
-          # 4. Fix the GitHub Pages "hidden folder" issue
+          npx expo export --platform web --clear
           touch dist/.nojekyll
 
       - name: Deploy to GitHub Pages

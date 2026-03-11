@@ -2,10 +2,11 @@
   "expo": {
     "name": "tafe.labApi",
     "slug": "tafe.labApi",
+    "assetBundlePatterns": ["**/*"],
     "web": {
       "bundler": "metro",
       "output": "export",
-      "baseUrl": ""
+      "baseUrl": "/tafe.labApi"
     }
   }
 }
