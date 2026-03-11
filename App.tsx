@@ -7,7 +7,6 @@ import { WeatherUI } from "./weather/ui/weatherUI";
 import { WeatherDetailUI } from "./weather/ui/weatherDetailUI";
 import { HomeScreen } from "./HomeScreen";
 
-// 1️⃣ Define stack types
 export type RootStackParamList = {
   Home: undefined;
   Weather: undefined;
@@ -16,11 +15,10 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// 2️⃣ Linking config for GitHub Pages
 const linking =
   Platform.OS === "web"
     ? {
-        prefixes: [createURL("/")], // expo-linking creates correct hash URL
+        prefixes: [createURL("/")], // hash-based URL for GitHub Pages
         config: { screens: {} },
       }
     : undefined;
@@ -28,14 +26,7 @@ const linking =
 export default function App() {
   return (
     <NavigationContainer linking={linking}>
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          headerStyle: { backgroundColor: "#fff" },
-          headerTitleStyle: { fontWeight: "bold" },
-          headerTitleAlign: "center",
-        }}
-      >
+      <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
           name="Home"
           component={HomeScreen}

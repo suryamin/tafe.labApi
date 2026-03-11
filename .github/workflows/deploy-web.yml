@@ -1,0 +1,31 @@
+name: Test and Deploy Web
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Jest Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm test
+
+  deploy:
+    name: Deploy Web
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run predeploy
+      - run: npm run deploy
