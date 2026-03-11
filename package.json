@@ -1,7 +1,6 @@
 {
   "name": "labs",
   "version": "1.0.0",
-  "homepage": "https://suryamin.github.io/tafe.labApi",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
