@@ -11,7 +11,7 @@
     "test": "jest --setupFiles ./jest.globals.js",
     "test:watch": "jest --watch",
     "lint": "npx eslint .",
-    "predeploy": "expo export --platform web",
+    "predeploy": "npx expo export --platform web",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {

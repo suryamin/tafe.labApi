@@ -3,20 +3,10 @@
     "name": "tafe.labApi",
     "slug": "tafe.labApi",
     "platforms": ["ios", "android", "web"],
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "export",
       "baseUrl": "/tafe.labApi"
-    },
-    "assetBundlePatterns": ["**/*"]
+    }
   }
 }
