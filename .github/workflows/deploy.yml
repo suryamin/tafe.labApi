@@ -26,9 +26,11 @@ jobs:
         run: npm install
 
       - name: Build Web
-        run: npx expo export --platform web --clear
+        run: |
+          npx expo export --platform web --clear
+          # This command finds "/_expo" and replaces it with "/tafe.labApi/_expo"
+          sed -i 's|src="/_expo|src="/tafe.labApi/_expo|g' dist/index.html
         env:
-          EXPO_PUBLIC_BASE_URL: "/tafe.labApi"
           EXPO_USE_STATIC: "false"
 
       - name: Deploy to GitHub Pages

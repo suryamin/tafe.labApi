@@ -16,7 +16,7 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const linking = {
-  prefixes: ["https://yourusername.github.io/tafe.labApi"],
+  prefixes: ["https://suryamin.github.io/tafe.labApi"],
   config: {
     screens: {
       Home: "",
