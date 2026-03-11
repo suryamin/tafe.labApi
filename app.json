@@ -5,7 +5,7 @@
     "web": {
       "bundler": "metro",
       "output": "export",
-      "baseUrl": "/tafe.labApi"
+      "baseUrl": ""
     }
   }
 }
