@@ -56,7 +56,7 @@ describe("WeatherDetailUI Component", () => {
   });
 
   // ===============================
-  // 1️⃣ Loading State Test
+  // 1 Loading State Test
   // ===============================
   test("should show loading indicator initially", () => {
     mockedGetWeather.mockResolvedValue({} as WeatherResponse);
@@ -68,7 +68,7 @@ describe("WeatherDetailUI Component", () => {
   });
 
   // ===============================
-  // 2️⃣ Weather Data Render
+  // 2 Weather Data Render
   // ===============================
   test("should display weather data after fetch", async () => {
     mockedGetWeather.mockResolvedValue({
@@ -92,7 +92,7 @@ describe("WeatherDetailUI Component", () => {
   });
 
   // ===============================
-  // 3️⃣ API Error Handling
+  // 3 API Error Handling
   // ===============================
   test("should handle API errors gracefully", async () => {
     mockedGetWeather.mockRejectedValue(new Error("API failed"));
@@ -105,7 +105,7 @@ describe("WeatherDetailUI Component", () => {
   });
 
   // ===============================
-  // 4️⃣ No Data Fallback
+  // 4 No Data Fallback
   // ===============================
   test("should show fallback when mapped weather is null", async () => {
     mockedGetWeather.mockResolvedValue({} as WeatherResponse);

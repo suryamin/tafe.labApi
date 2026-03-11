@@ -1,28 +1,17 @@
-//---npm install axios ---> HTTP requests
-
+import React, { useState } from "react";
 import {
   View,
   Text,
   TextInput,
   Button,
-  TouchableOpacity,
   FlatList,
+  TouchableOpacity,
 } from "react-native";
-import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../App";
 import { styles } from "../../style";
-
-type RootStackParamList = {
-  Home: undefined;
-  ClassComponent: undefined;
-  FunctionalComponent: undefined;
-  Storage: undefined;
-  Calculator: undefined;
-  Weather: undefined;
-  WeatherDetailUI: { city: string };
-};
 
 type WeatherNavProp = NativeStackNavigationProp<RootStackParamList, "Weather">;
 
@@ -45,7 +34,6 @@ export const WeatherUI = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>City Weather</Text>
-
       <TextInput
         style={styles.input}
         placeholder="Search City"
@@ -53,19 +41,14 @@ export const WeatherUI = () => {
         value={city}
         onChangeText={setCity}
       />
-
       <Button title="Search City" onPress={searchCity} />
-
       <FlatList
         data={cities}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.taskContainer}>
             <Text style={styles.task}>{item}</Text>
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => openWeatherDetail(item)}
-            >
+            <TouchableOpacity onPress={() => openWeatherDetail(item)}>
               <MaterialIcons name="arrow-forward-ios" style={styles.icon} />
             </TouchableOpacity>
           </View>

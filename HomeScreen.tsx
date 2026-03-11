@@ -2,30 +2,15 @@ import React from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "./App";
 import { styles } from "./style";
 
-/* --------------------------------------------------------- */
-/* 1. Define the shape of your navigation paths              */
-/* --------------------------------------------------------- */
-type RootStackParamList = {
-  Home: undefined;
-  Weather: undefined;
-  WeatherDetailUI: { city: string };
-};
-
-/* --------------------------------------------------------- */
-/* 2. Define the Props for this specific screen              */
-/* --------------------------------------------------------- */
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
-/* --------------------------------------------------------- */
-/* 3. Define the shape of your menu items                    */
-/* We restrict 'route' to only screens that don't need params */
-/* --------------------------------------------------------- */
 interface MenuItem {
   id: string;
   title: string;
-  route: "Home" | "Weather"; // This specifically avoids the "No overload" error
+  route: "Weather"; // Only navigates to Weather
 }
 
 const MENU_DATA: MenuItem[] = [
