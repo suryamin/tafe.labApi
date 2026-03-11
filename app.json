@@ -14,10 +14,8 @@
     },
     "web": {
       "bundler": "metro",
-      "build": {
-        "publicPath": "./"
-      },
-      "favicon": "./assets/favicon.png"
+      "output": "static",
+      "baseUrl": "/tafe.labApi"
     },
     "assetBundlePatterns": ["**/*"]
   }

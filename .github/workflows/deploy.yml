@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [fix-web-blank] # Or your main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }} # Only needed if using EAS
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Web
+        run: npx expo export --platform web
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # Expo 54 exports to 'dist' by default
+          branch: gh-pages

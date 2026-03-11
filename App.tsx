@@ -15,9 +15,20 @@ export type RootStackParamList = {
 // Create typed navigator
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+const linking = {
+  prefixes: ["https://yourusername.github.io/tafe.labApi"],
+  config: {
+    screens: {
+      Home: "",
+      Weather: "weather",
+      WeatherDetailUI: "weather/:city",
+    },
+  },
+};
+
 export default function App() {
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
