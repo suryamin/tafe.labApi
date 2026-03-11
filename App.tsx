@@ -21,7 +21,7 @@ const linking = {
     screens: {
       Home: "",
       Weather: "weather",
-      WeatherDetailUI: "weather-detail",
+      WeatherDetailUI: "weather/:city",
     },
   },
 };
