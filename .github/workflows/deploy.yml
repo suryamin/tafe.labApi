@@ -33,11 +33,10 @@ jobs:
       #     # TELL GITHUB NOT TO IGNORE THE _EXPO FOLDER
       #     touch dist/.nojekyll
       - name: Build Web
-        env:
-          EXPO_PUBLIC_BASE_URL: "/tafe.labApi"
-          EXPO_USE_STATIC: "false"
         run: |
-          npx expo export --platform web --clear
+          EXPO_USE_STATIC=false npx expo export --platform web --clear
+          sed -i 's|src="/_expo|src="/tafe.labApi/_expo|g' dist/index.html
+          find dist/_expo/static/js/web -name "*.js" -exec sed -i 's|"/assets/|"/tafe.labApi/assets/|g' {} +
           touch dist/.nojekyll
 
       - name: Deploy to GitHub Pages
@@ -45,3 +44,13 @@ jobs:
         with:
           folder: dist # Expo 54 exports to 'dist' by default
           branch: gh-pages
+
+# 1. Build the app (ignoring the expo-router error)
+# EXPO_USE_STATIC=false npx expo export --platform web --clear
+# # 2. Fix the HTML paths (the script tag you see at the bottom)
+# sed -i 's|src="/_expo|src="/tafe.labApi/_expo|g' dist/index.html
+# # 3. Fix the Internal Asset paths (MaterialIcons and Fonts)
+# # This finds any mention of "/assets/" in your JS and adds the prefix
+# find dist/_expo/static/js/web -name "*.js" -exec sed -i 's|"/assets/|"/tafe.labApi/assets/|g' {} +
+# # 4. Tell GitHub NOT to hide the _expo folder
+# touch dist/.nojekyll
