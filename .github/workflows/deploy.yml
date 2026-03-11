@@ -37,18 +37,14 @@ jobs:
           # 1. Build the app
           EXPO_USE_STATIC=false npx expo export --platform web --clear
 
-          # 2. Fix the HTML script tags
+          # 2. Fix the HTML script tag
           sed -i 's|src="/_expo|src="/tafe.labApi/_expo|g' dist/index.html
 
-          # 3. Fix the Manifest/JSON paths
-          sed -i 's|href="/|href="/tafe.labApi/|g' dist/index.html
+          # 3. THE CRITICAL FIX: Manually re-route the Icons inside the JS files
+          # This replaces "/assets/" with "/tafe.labApi/assets/" everywhere in your code
+          grep -rli '"/assets/' dist/_expo/static/js/web/ | xargs -i@ sed -i 's|"/assets/|"/tafe.labApi/assets/|g' @
 
-          # 4. FIX THE ICONS & INTERNAL JS (This fixes the (index):1 error)
-          # This replaces /assets/ and /_expo/ inside the JS code itself
-          find dist/_expo/static/js/web -name "*.js" -exec sed -i 's|"/assets/|"/tafe.labApi/assets/|g' {} +
-          find dist/_expo/static/js/web -name "*.js" -exec sed -i 's|"/_expo/|"/tafe.labApi/_expo/|g' {} +
-
-          # 5. Prevent GitHub from hiding folders
+          # 4. Tell GitHub not to ignore the _expo folder
           touch dist/.nojekyll
 
       - name: Deploy to GitHub Pages
