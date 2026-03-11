@@ -27,9 +27,7 @@ jobs:
 
       - name: Build Web
         env:
-          # This forces the /tafe.labApi/ path in index.html
           EXPO_PUBLIC_BASE_URL: /tafe.labApi
-          # This forces Expo to skip the Static Rendering check
           EXPO_USE_STATIC: false
         run: npx expo export --platform web --clear
 
