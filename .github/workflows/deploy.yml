@@ -26,10 +26,12 @@ jobs:
         run: npm install
 
       - name: Build Web
-        run: npx expo export --platform web --clear
-        env:
-          EXPO_PUBLIC_BASE_URL: "/tafe.labApi"
-          EXPO_USE_STATIC: "false"
+        run: |
+          npx expo export --platform web --clear
+          # Force the path in index.html
+          sed -i 's|src="/_expo|src="/tafe.labApi/_expo|g' dist/index.html
+          # TELL GITHUB NOT TO IGNORE THE _EXPO FOLDER
+          touch dist/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
