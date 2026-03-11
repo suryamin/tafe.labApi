@@ -26,9 +26,12 @@ jobs:
         run: npm install
 
       - name: Build Web
-        run: npx expo export --platform web --clear
         env:
+          # This forces the /tafe.labApi/ path in index.html
           EXPO_PUBLIC_BASE_URL: /tafe.labApi
+          # This forces Expo to skip the Static Rendering check
+          EXPO_USE_STATIC: false
+        run: npx expo export --platform web --clear
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
