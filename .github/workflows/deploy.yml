@@ -25,12 +25,30 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # - name: Build Web
+      #   run: |
+      #     npx expo export --platform web --clear
+      #     # Force the path in index.html
+      #     sed -i 's|src="/_expo|src="/tafe.labApi/_expo|g' dist/index.html
+      #     # TELL GITHUB NOT TO IGNORE THE _EXPO FOLDER
+      #     touch dist/.nojekyll
       - name: Build Web
         run: |
-          npx expo export --platform web --clear
-          # Force the path in index.html
+          # 1. Build the app
+          EXPO_USE_STATIC=false npx expo export --platform web --clear
+
+          # 2. Fix the HTML script tags
           sed -i 's|src="/_expo|src="/tafe.labApi/_expo|g' dist/index.html
-          # TELL GITHUB NOT TO IGNORE THE _EXPO FOLDER
+
+          # 3. Fix the Manifest/JSON paths
+          sed -i 's|href="/|href="/tafe.labApi/|g' dist/index.html
+
+          # 4. FIX THE ICONS & INTERNAL JS (This fixes the (index):1 error)
+          # This replaces /assets/ and /_expo/ inside the JS code itself
+          find dist/_expo/static/js/web -name "*.js" -exec sed -i 's|"/assets/|"/tafe.labApi/assets/|g' {} +
+          find dist/_expo/static/js/web -name "*.js" -exec sed -i 's|"/_expo/|"/tafe.labApi/_expo/|g' {} +
+
+          # 5. Prevent GitHub from hiding folders
           touch dist/.nojekyll
 
       - name: Deploy to GitHub Pages

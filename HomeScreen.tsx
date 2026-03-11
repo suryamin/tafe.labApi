@@ -10,7 +10,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 interface MenuItem {
   id: string;
   title: string;
-  route: "Weather"; // Only navigates to Weather
+  route: "Weather";
 }
 
 const MENU_DATA: MenuItem[] = [

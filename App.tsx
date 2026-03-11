@@ -14,12 +14,13 @@ export type RootStackParamList = {
 
 // Create typed navigator
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
 const linking = {
-  prefixes: ["https://suryamin.github.io/tafe.labApi"],
+  prefixes: ["https://suryamin.github.io/tafe.labApi/", "tafelabapi://"],
   config: {
     screens: {
-      Home: "",
+      Home: {
+        path: "",
+      },
       Weather: "weather",
       WeatherDetailUI: "weather/:city",
     },
